@@ -55,20 +55,32 @@ const Home = () => {
             image_url,
             location,
             created_at,
-            profiles(username, avatar_url)
+            user_id
           `)
           .order('created_at', { ascending: false });
         
         if (error) throw error;
         
+        // Get profile data separately
+        const userIds = benchData.map(bench => bench.user_id);
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, username, avatar_url')
+          .in('id', userIds);
+          
+        if (profilesError) throw profilesError;
+        
+        // Create a map of user IDs to profile data for easy lookup
+        const profilesMap = Object.fromEntries(
+          (profilesData || []).map(profile => [profile.id, profile])
+        );
+        
         // Get like counts for each bench
         const benchIds = benchData.map(bench => bench.id);
         const { data: likesData, error: likesError } = await supabase
           .from('likes')
-          .select('bench_id, count')
-          .in('bench_id', benchIds)
           .select('bench_id')
-          .order('bench_id');
+          .in('bench_id', benchIds);
           
         if (likesError) throw likesError;
         
@@ -105,18 +117,22 @@ const Home = () => {
         benchIds.forEach(id => { commentCounts[id] = 0 });
         
         // Format the data for our components
-        const formattedBenches = benchData.map(bench => ({
-          id: bench.id,
-          imageUrl: bench.image_url,
-          description: bench.description,
-          location: bench.location || "Unknown location",
-          likes: likeCounts[bench.id] || 0,
-          comments: commentCounts[bench.id] || 0,
-          username: bench.profiles?.username || "Anonymous",
-          userAvatar: bench.profiles?.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=default",
-          createdAt: new Date(bench.created_at).toLocaleDateString(),
-          isLiked: !!userLikes[bench.id]
-        }));
+        const formattedBenches = benchData.map(bench => {
+          const profile = profilesMap[bench.user_id] || {};
+          
+          return {
+            id: bench.id,
+            imageUrl: bench.image_url,
+            description: bench.description,
+            location: bench.location || "Unknown location",
+            likes: likeCounts[bench.id] || 0,
+            comments: commentCounts[bench.id] || 0,
+            username: profile.username || "Anonymous",
+            userAvatar: profile.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=default",
+            createdAt: new Date(bench.created_at).toLocaleDateString(),
+            isLiked: !!userLikes[bench.id]
+          };
+        });
         
         setBenches(formattedBenches);
       } catch (error) {
