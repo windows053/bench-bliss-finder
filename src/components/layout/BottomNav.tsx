@@ -17,7 +17,7 @@ const BottomNav = () => {
   const navItems: NavItem[] = [
     {
       icon: <Home size={24} />,
-      label: "Home",
+      label: "",
       path: "/",
       isActive: currentPath === "/",
     },
