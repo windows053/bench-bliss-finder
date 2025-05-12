@@ -11,7 +11,7 @@ const CameraPlaceholder = () => {
       </div>
       <h2 className="text-xl font-semibold mb-2">Capture a Bench Moment</h2>
       <p className="text-muted-foreground mb-6 max-w-md">
-        ParkPause requires Supabase integration for camera functionality. 
+        TakeASeat requires Supabase integration for camera functionality. 
         Connect to Supabase to enable real-time photo capture of your favorite benches.
       </p>
       <Button className="bg-park-teal hover:bg-park-teal/90">

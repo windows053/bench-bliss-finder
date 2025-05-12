@@ -10,7 +10,7 @@ const MapPlaceholder = () => {
       </div>
       <h2 className="text-xl font-semibold mb-2">Discover Benches Worldwide</h2>
       <p className="text-muted-foreground mb-6 max-w-md">
-        ParkPause requires Supabase integration to enable our interactive world map
+        TakeASeat requires Supabase integration to enable our interactive world map
         with geotagged bench markers. Connect to Supabase to explore benches around you.
       </p>
       <div className="w-full max-w-md h-60 bg-muted/50 rounded-lg border-2 border-dashed border-muted flex items-center justify-center">

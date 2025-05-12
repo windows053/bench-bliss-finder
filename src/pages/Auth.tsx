@@ -37,7 +37,7 @@ const Auth = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-park-teal/20 to-white p-4">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-park-teal mb-2">ParkPause</h1>
+        <h1 className="text-3xl font-bold text-park-teal mb-2">TakeASeat</h1>
         <p className="text-muted-foreground">Find your perfect bench moment</p>
       </div>
       

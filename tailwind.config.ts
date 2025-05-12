@@ -63,7 +63,7 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom colors for ParkPause
+				// Custom colors for TakeASeat
 				"park-teal": "#2A9D8F",
 				"park-sand": "#E9C46A", 
 				"park-cream": "#F8F5F0",

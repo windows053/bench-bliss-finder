@@ -19,7 +19,7 @@ const Splash = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-park-teal to-park-teal/80 text-white p-4">
       <div className="animate-pulse-gentle">
-        <h1 className="text-4xl font-bold mb-2">ParkPause</h1>
+        <h1 className="text-4xl font-bold mb-2">TakeASeat</h1>
         <p className="text-center opacity-90">Find your perfect bench moment</p>
       </div>
     </div>

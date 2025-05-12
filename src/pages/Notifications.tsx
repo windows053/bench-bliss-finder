@@ -12,7 +12,7 @@ const Notifications = () => {
         </div>
         <h2 className="text-xl font-semibold mb-2">Notifications</h2>
         <p className="text-muted-foreground text-center max-w-md">
-          Stay updated with likes, comments, and follows once you connect ParkPause to Supabase for authentication and notifications.
+          Stay updated with likes, comments, and follows once you connect TakeASeat to Supabase for authentication and notifications.
         </p>
       </div>
     </PageLayout>
