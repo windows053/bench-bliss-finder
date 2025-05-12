@@ -17,31 +17,31 @@ const BottomNav = () => {
   const navItems: NavItem[] = [
     {
       icon: <Home size={24} />,
-      label: "",
+      label: "Home",
       path: "/",
       isActive: currentPath === "/",
     },
     {
       icon: <Search size={24} />,
-      label: "",
+      label: "Discover",
       path: "/discover",
       isActive: currentPath === "/discover",
     },
     {
       icon: <Camera size={24} className="text-white" />,
-      label: "",
+      label: "Post",
       path: "/camera",
       isActive: currentPath === "/camera",
     },
     {
       icon: <Bell size={24} />,
-      label: "",
+      label: "Alerts",
       path: "/notifications",
       isActive: currentPath === "/notifications",
     },
     {
       icon: <User size={24} />,
-      label: "",
+      label: "Profile",
       path: "/profile",
       isActive: currentPath === "/profile",
     },
