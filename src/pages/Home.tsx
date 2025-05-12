@@ -19,6 +19,12 @@ type Bench = {
   isLiked: boolean;
 };
 
+type Profile = {
+  id: string;
+  username: string | null;
+  avatar_url: string | null;
+};
+
 const Home = () => {
   const [benches, setBenches] = useState<Bench[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,9 +77,12 @@ const Home = () => {
         if (profilesError) throw profilesError;
         
         // Create a map of user IDs to profile data for easy lookup
-        const profilesMap = Object.fromEntries(
-          (profilesData || []).map(profile => [profile.id, profile])
-        );
+        const profilesMap: Record<string, Profile> = {};
+        (profilesData || []).forEach(profile => {
+          if (profile.id) {
+            profilesMap[profile.id] = profile;
+          }
+        });
         
         // Get like counts for each bench
         const benchIds = benchData.map(bench => bench.id);
@@ -118,7 +127,7 @@ const Home = () => {
         
         // Format the data for our components
         const formattedBenches = benchData.map(bench => {
-          const profile = profilesMap[bench.user_id] || {};
+          const profile = profilesMap[bench.user_id] || null;
           
           return {
             id: bench.id,
@@ -127,8 +136,8 @@ const Home = () => {
             location: bench.location || "Unknown location",
             likes: likeCounts[bench.id] || 0,
             comments: commentCounts[bench.id] || 0,
-            username: profile.username || "Anonymous",
-            userAvatar: profile.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=default",
+            username: profile?.username || "Anonymous",
+            userAvatar: profile?.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=default",
             createdAt: new Date(bench.created_at).toLocaleDateString(),
             isLiked: !!userLikes[bench.id]
           };
