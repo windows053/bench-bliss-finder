@@ -1,9 +1,12 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Heart, MessageCircle, Share, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useBenchLikes } from "@/hooks/useBenchLikes";
+import { useAuth } from "@/contexts/AuthContext";
 
 type BenchCardProps = {
+  id: string;
   imageUrl: string;
   description: string;
   location: string;
@@ -12,9 +15,12 @@ type BenchCardProps = {
   username: string;
   userAvatar: string;
   createdAt: string;
+  isLiked: boolean;
+  onLikeToggle?: (benchId: string, isLiked: boolean) => void;
 };
 
 const BenchCard = ({
+  id,
   imageUrl,
   description,
   location,
@@ -23,7 +29,37 @@ const BenchCard = ({
   username,
   userAvatar,
   createdAt,
+  isLiked,
+  onLikeToggle,
 }: BenchCardProps) => {
+  const { toggleLike, isLiking } = useBenchLikes();
+  const { user } = useAuth();
+  const [optimisticLiked, setOptimisticLiked] = useState(isLiked);
+  const [optimisticLikes, setOptimisticLikes] = useState(likes);
+  
+  const handleLikeClick = async () => {
+    if (!user) return;
+    
+    // Optimistic UI update
+    const newLikedState = !optimisticLiked;
+    setOptimisticLiked(newLikedState);
+    setOptimisticLikes(prev => newLikedState ? prev + 1 : prev - 1);
+    
+    // Call the API
+    const result = await toggleLike(id, optimisticLiked);
+    
+    if (result.success) {
+      // Notify parent component about the change
+      if (onLikeToggle) {
+        onLikeToggle(id, result.liked);
+      }
+    } else {
+      // Revert optimistic update if the API call failed
+      setOptimisticLiked(optimisticLiked);
+      setOptimisticLikes(likes);
+    }
+  };
+
   return (
     <div className="bench-card mb-6 animate-fade-in">
       <div className="p-3 flex items-center space-x-2">
@@ -56,8 +92,14 @@ const BenchCard = ({
       </div>
       <div className="p-4">
         <div className="flex space-x-4">
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-park-charcoal hover:text-park-teal">
-            <Heart size={24} />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className={`h-8 w-8 ${optimisticLiked ? 'text-red-500' : 'text-park-charcoal hover:text-park-teal'}`}
+            onClick={handleLikeClick}
+            disabled={isLiking || !user}
+          >
+            <Heart size={24} fill={optimisticLiked ? "currentColor" : "none"} />
             <span className="sr-only">Like</span>
           </Button>
           <Button variant="ghost" size="icon" className="h-8 w-8 text-park-charcoal hover:text-park-teal">
@@ -69,7 +111,7 @@ const BenchCard = ({
             <span className="sr-only">Share</span>
           </Button>
         </div>
-        <p className="font-medium text-sm mt-2">{likes} likes</p>
+        <p className="font-medium text-sm mt-2">{optimisticLikes} likes</p>
         <div className="mt-1">
           <span className="font-medium text-sm">{username}</span>{" "}
           <span className="text-sm">{description}</span>
