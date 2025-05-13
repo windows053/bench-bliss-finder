@@ -36,8 +36,9 @@ const BenchCard = ({
   const { user } = useAuth();
   const [optimisticLiked, setOptimisticLiked] = useState(isLiked);
   const [optimisticLikes, setOptimisticLikes] = useState(likes);
+  const [showHeartAnimation, setShowHeartAnimation] = useState(false);
   
-  const handleLikeClick = async () => {
+  const handleLikeToggle = async () => {
     if (!user) return;
     
     // Optimistic UI update
@@ -56,6 +57,32 @@ const BenchCard = ({
     } else {
       // Revert optimistic update if the API call failed
       setOptimisticLiked(optimisticLiked);
+      setOptimisticLikes(likes);
+    }
+  };
+  
+  const handleDoubleClick = async () => {
+    if (!user || optimisticLiked) return;
+    
+    // Show heart animation
+    setShowHeartAnimation(true);
+    setTimeout(() => setShowHeartAnimation(false), 1000);
+    
+    // Like the post
+    setOptimisticLiked(true);
+    setOptimisticLikes(prev => prev + 1);
+    
+    // Call the API
+    const result = await toggleLike(id, false);
+    
+    if (result.success) {
+      // Notify parent component about the change
+      if (onLikeToggle) {
+        onLikeToggle(id, true);
+      }
+    } else {
+      // Revert optimistic update if the API call failed
+      setOptimisticLiked(isLiked);
       setOptimisticLikes(likes);
     }
   };
@@ -83,30 +110,36 @@ const BenchCard = ({
           </svg>
         </Button>
       </div>
-      <div className="aspect-square bg-muted">
+      <div className="aspect-square bg-muted relative">
         <img
           src={imageUrl}
           alt="Bench"
           className="w-full h-full object-cover"
+          onDoubleClick={handleDoubleClick}
         />
+        {showHeartAnimation && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Heart size={80} className="text-white animate-pulse" fill="white" />
+          </div>
+        )}
       </div>
       <div className="p-4">
         <div className="flex space-x-4">
           <Button 
             variant="ghost" 
             size="icon" 
-            className={`h-8 w-8 ${optimisticLiked ? 'text-red-500' : 'text-park-charcoal hover:text-park-teal'}`}
-            onClick={handleLikeClick}
+            className={`h-8 w-8 ${optimisticLiked ? 'text-red-500' : 'text-primary hover:text-pink-500'}`}
+            onClick={handleLikeToggle}
             disabled={isLiking || !user}
           >
             <Heart size={24} fill={optimisticLiked ? "currentColor" : "none"} />
             <span className="sr-only">Like</span>
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-park-charcoal hover:text-park-teal">
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:text-pink-500">
             <MessageCircle size={24} />
             <span className="sr-only">Comment</span>
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-park-charcoal hover:text-park-teal">
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:text-pink-500">
             <Share size={24} />
             <span className="sr-only">Share</span>
           </Button>

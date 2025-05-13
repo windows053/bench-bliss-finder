@@ -5,7 +5,6 @@ import { Home, Search, Camera, Bell, User } from "lucide-react";
 
 type NavItem = {
   icon: React.ReactNode;
-  label: string;
   path: string;
   isActive: boolean;
 };
@@ -17,52 +16,47 @@ const BottomNav = () => {
   const navItems: NavItem[] = [
     {
       icon: <Home size={24} />,
-      label: "Home",
       path: "/",
       isActive: currentPath === "/",
     },
     {
       icon: <Search size={24} />,
-      label: "Discover",
       path: "/discover",
       isActive: currentPath === "/discover",
     },
     {
       icon: <Camera size={24} className="text-white" />,
-      label: "Post",
       path: "/camera",
       isActive: currentPath === "/camera",
     },
     {
       icon: <Bell size={24} />,
-      label: "Alerts",
       path: "/notifications",
       isActive: currentPath === "/notifications",
     },
     {
       icon: <User size={24} />,
-      label: "Profile",
       path: "/profile",
       isActive: currentPath === "/profile",
     },
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center py-2 px-4 z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-violet-800 to-purple-600 border-t border-purple-700 flex justify-around items-center py-3 px-4 z-50">
       {navItems.map((item, index) => (
         <Link
           key={index}
           to={item.path}
           className={`nav-item ${item.isActive ? "active" : ""}`}
+          aria-label={item.path.replace("/", "") || "home"}
         >
           {item.label === "Post" ? (
-            <div className="bg-park-teal p-3 rounded-full -mt-5 shadow-md">
+            <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-3 rounded-full -mt-5 shadow-md">
               {item.icon}
             </div>
           ) : (
             item.icon
           )}
-          <span className="text-xs mt-1">{item.label}</span>
         </Link>
       ))}
     </div>
